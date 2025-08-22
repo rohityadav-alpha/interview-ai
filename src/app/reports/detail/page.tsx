@@ -596,18 +596,18 @@ export default function ReportDetail() {
         {(uniqueImprovements.length > 0 || uniqueConfidenceTips.length > 0) && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {uniqueImprovements.length > 0 && (
-              <div className={`${isDark ? 'bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-xl border-blue-400/30' : 'bg-white/80 backdrop-blur-xl border-blue-200'} border rounded-2xl p-6`}>
-                <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-800'} mb-4 flex items-center gap-2`}>
-                  <svg className={`w-5 h-5 ${isDark ? 'text-orange-400' : 'text-orange-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className={`${isDark ? 'bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-xl border-blue-400/30' : 'bg-blue-100/10 backdrop-blur-xl border-blue-200'} border rounded-2xl p-6`}>
+                <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-white-800'} mb-4 flex items-center gap-2`}>
+                  <svg className={`w-5 h-5 ${isDark ? 'text-white-400' : 'text-white-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                   Areas for Improvement
                 </h3>
-                <div className={`${isDark ? 'bg-orange-500/10 border-orange-400/30' : 'bg-orange-50 border-orange-200'} p-4 rounded-lg border`}>
+                <div className={`${isDark ? 'bg-orange-500/10 border-orange-400/30' : 'bg-blue-80/10 border-blue-200'} p-4 rounded-lg border`}>
                   <ul className="space-y-2">
                     {uniqueImprovements.map((improvement, index) => (
-                      <li key={index} className={`flex items-start gap-2 text-sm ${isDark ? 'text-orange-200' : 'text-orange-800'}`}>
-                        <span className={`${isDark ? 'text-orange-400' : 'text-orange-600'} mt-1 font-bold`}>{index + 1}.</span>
+                      <li key={index} className={`flex items-start gap-2 text-sm ${isDark ? 'text-white-200' : 'text-white-800'}`}>
+                        <span className={`${isDark ? 'text-white-400' : 'text-white-600'} mt-1 font-bold`}>{index + 1}.</span>
                         <span>{improvement}</span>
                       </li>
                     ))}
@@ -617,18 +617,18 @@ export default function ReportDetail() {
             )}
 
             {uniqueConfidenceTips.length > 0 && (
-              <div className={`${isDark ? 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 backdrop-blur-xl border-blue-400/30' : 'bg-white/80 backdrop-blur-xl border-green-200'} border rounded-2xl p-6`}>
-                <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-800'} mb-4 flex items-center gap-2`}>
-                  <svg className={`w-5 h-5 ${isDark ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className={`${isDark ? 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 backdrop-blur-xl border-blue-400/30' : 'bg-blue-100/10 backdrop-blur-xl border-blue-200'} border rounded-2xl p-6`}>
+                <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-white-800'} mb-4 flex items-center gap-2`}>
+                  <svg className={`w-5 h-5 ${isDark ? 'text-white-400' : 'text-white-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                   Confidence Building Tips
                 </h3>
-                <div className={`${isDark ? 'bg-green-500/10 border-green-400/30' : 'bg-green-50 border-green-200'} p-4 rounded-lg border`}>
+                <div className={`${isDark ? 'bg-blue-500/10 border-green-400/30' : 'bg-blue-80/10 border-green-200'} p-4 rounded-lg border`}>
                   <ul className="space-y-2">
                     {uniqueConfidenceTips.map((tip, index) => (
-                      <li key={index} className={`flex items-start gap-2 text-sm ${isDark ? 'text-green-200' : 'text-green-800'}`}>
-                        <span className={`${isDark ? 'text-green-400' : 'text-green-600'} mt-1 font-bold`}>{index + 1}.</span>
+                      <li key={index} className={`flex items-start gap-2 text-sm ${isDark ? 'text-white-200' : 'text-white-800'}`}>
+                        <span className={`${isDark ? 'text-white-400' : 'text-white-600'} mt-1 font-bold`}>{index + 1}.</span>
                         <span>{tip}</span>
                       </li>
                     ))}
