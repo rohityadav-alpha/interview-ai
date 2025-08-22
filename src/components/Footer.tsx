@@ -42,9 +42,9 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { icon: FaGithub, href: "#", label: "GitHub", color: "hover:text-gray-300" },
-    { icon: FaLinkedin, href: "#", label: "LinkedIn", color: "hover:text-blue-400" },
-    { icon: FaXTwitter, href: "#", label: "Twitter", color: "hover:text-blue-300" }
+    { icon: FaGithub, href: "https://github.com/rohityadav-alpha/interview-ai", label: "GitHub", color: "hover:text-gray-300" },
+    { icon: FaLinkedin, href: "https://www.linkedin.com/in/rohit-yadav-a7636b36a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=copy_link", label: "LinkedIn", color: "hover:text-blue-400" },
+    { icon: FaXTwitter, href: "https://x.com/Bfitofficial243?t=fSM3nfxVtP4ongHIT3ZuoQ&s=08", label: "Twitter", color: "hover:text-blue-300" }
   ];
 
   return (

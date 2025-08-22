@@ -42,6 +42,14 @@ export const interview_responses = pgTable("interview_responses", {
   confidence: varchar("confidence", { length: 20 }).default("medium"),
   response_time: integer("response_time").default(0),
   created_at: timestamp("created_at").defaultNow(),
+  improvements: text("improvements"),
+  confidence_tips: text("confidence_tips"),
+  final_score: integer("final_score").default(0),
+  avg_score: numeric("avg_score", { precision: 4, scale: 2 }).notNull(),
+  skills: text("skills").default(""),
+  user_first_name: varchar("user_first_name", { length: 255 }),
+  user_last_name: varchar("user_last_name", { length: 255 }),
+  user_email: varchar("user_email", { length: 255 }),
 });
 
 // ✅ Add attempts table (optional - for new workflow)

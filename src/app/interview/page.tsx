@@ -542,7 +542,7 @@ export default function InterviewPage() {
             Why are you leaving this interview?
           </p>
 
-          <div className="space-y-3 max-h-60 overflow-y-auto">
+          <div className="space-y-3 max-h-max overflow-y-visible">
             {[
               {
                 id: "too_difficult",
