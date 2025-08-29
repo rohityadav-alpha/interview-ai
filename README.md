@@ -1,6 +1,4 @@
-Bhai, main tere Next.js Interview AI project ke liye ek comprehensive README / Documentation draft kar deta hoon jo GitHub repo ke liye perfect hoga. Isme installation, setup, features sab details hongi.
 
-***
 
 # Interview AI - README and Documentation
 
