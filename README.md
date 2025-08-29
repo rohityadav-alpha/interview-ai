@@ -145,13 +145,4 @@ MIT License
 
 ***
 
-## Contact
 
-- GitHub: [rohityadav-alpha](https://github.com/rohityadav-alpha)
-- Email: rohityadav.alpha@example.com
-
-***
-
-**Bhai, ye README tera pura interview-ai project cover karega. Agar aur koi specific chahiye toh bol dena!**
-
-[1](https://github.com/rohityadav-alpha/interview-ai)
