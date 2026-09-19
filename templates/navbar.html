@@ -1,0 +1,45 @@
+{% load static %}
+<nav class="navbar">
+    <div class="navbar-inner">
+        <a href="{% url 'landing' %}" class="navbar-brand">
+            <span class="brand-text">INTERVIEW AI</span>
+            <span class="brand-dot"></span>
+        </a>
+        
+        <div class="navbar-links" id="navbarLinks">
+            <a href="{% url 'landing' %}" class="nav-link {% if request.resolver_match.url_name == 'landing' %}nav-link-active{% endif %}">HOME</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}nav-link-active{% endif %}">DASHBOARD</a>
+            <a href="{% url 'new_interview' %}" class="nav-link {% if request.resolver_match.url_name == 'new_interview' %}nav-link-active{% endif %}">START</a>
+            {% endif %}
+            <a href="{% url 'leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}nav-link-active{% endif %}">LEADERBOARD</a>
+        </div>
+        
+        <div class="navbar-auth">
+            {% if user.is_authenticated %}
+            <div class="user-menu">
+                <button class="user-avatar-btn" onclick="toggleUserMenu()">
+                    <div class="user-avatar">{{ user.username.0|upper }}</div>
+                    <span class="user-name-text">{{ user.username }}</span>
+                </button>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-header">
+                        <span class="dropdown-email">{{ user.email }}</span>
+                    </div>
+                    <a href="{% url 'dashboard' %}" class="dropdown-item">DASHBOARD</a>
+                    <a href="{% url 'logout' %}" class="dropdown-item dropdown-item-danger">SIGN OUT</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn btn-outline btn-sm" style="margin-right: 10px;">SIGN IN</a>
+            <a href="{% url 'signup' %}" class="btn btn-primary btn-sm">SIGN UP</a>
+            {% endif %}
+        </div>
+        
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    </div>
+</nav>

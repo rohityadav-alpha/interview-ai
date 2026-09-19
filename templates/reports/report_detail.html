@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}REPORT -- {{ interview.skill|upper }} | INTERVIEW AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Neo-Brutalism Base Styles for Reports */
+    .neo-brutalist {
+        font-family: monospace, sans-serif;
+        color: #000;
+        background-color: #FFF;
+        text-transform: uppercase;
+    }
+    
+    .neo-btn {
+        background-color: #FFF;
+        border: 2.5px solid #000;
+        box-shadow: 4px 4px 0px #000;
+        color: #000;
+        padding: 10px 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .neo-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px #000;
+    }
+    .neo-btn-primary {
+        background-color: #BCFF4F;
+    }
+
+    .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 2.5px solid #000;
+        padding-bottom: 1rem;
+    }
+    
+    .report-title {
+        font-size: 3rem;
+        font-weight: 900;
+        margin: 0;
+    }
+    
+    .report-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .grade-banner {
+        border: 2.5px solid #000;
+        box-shadow: 4px 4px 0px #000;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #FFF;
+    }
+    .grade-banner.grade-good {
+        background-color: #BCFF4F;
+    }
+    
+    .grade-text {
+        font-size: 4rem;
+        font-weight: 900;
+        margin: 0;
+        line-height: 1;
+    }
+    
+    .grade-detail {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+    }
+    
+    .grade-score {
+        text-align: right;
+    }
+    
+    .grade-score-value {
+        font-size: 4rem;
+        font-weight: 900;
+        display: block;
+    }
+    
+    .report-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+    
+    .report-stat {
+        border: 2.5px solid #000;
+        box-shadow: 4px 4px 0px #000;
+        padding: 1.5rem;
+        text-align: center;
+        background-color: #FFF;
+    }
+    
+    .report-stat-value {
+        font-size: 2.5rem;
+        font-weight: 900;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .report-stat-label {
+        font-weight: 700;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        border-bottom: 2.5px solid #000;
+        padding-bottom: 0.5rem;
+    }
+
+    .question-card {
+        border: 2.5px solid #000;
+        box-shadow: 4px 4px 0px #000;
+        background-color: #FFF;
+        margin-bottom: 2rem;
+    }
+    
+    .question-header {
+        border-bottom: 2.5px solid #000;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #BCFF4F;
+    }
+    
+    .question-num {
+        font-size: 1.5rem;
+        font-weight: 900;
+    }
+    
+    .question-score {
+        font-size: 1.25rem;
+        font-weight: 900;
+        border: 2.5px solid #000;
+        padding: 0.25rem 0.5rem;
+        background-color: #FFF;
+    }
+    
+    .score-high { background-color: #BCFF4F; }
+    .score-mid { background-color: #FFE600; }
+    .score-low { background-color: #FF4F4F; }
+    
+    .question-body {
+        padding: 1.5rem;
+    }
+    
+    .report-section {
+        margin-bottom: 1.5rem;
+    }
+    .report-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .report-section h4 {
+        font-size: 1.25rem;
+        font-weight: 900;
+        margin-bottom: 0.5rem;
+        text-decoration: underline;
+    }
+    
+    .report-section p {
+        font-weight: 500;
+        line-height: 1.4;
+    }
+    
+    .report-section ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .report-section li {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    @media print {
+        .navbar, .footer, .report-actions, .toast-container {
+            display: none !important;
+        }
+        body {
+            background: #fff !important;
+            color: #000 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .main-content {
+            padding: 0 !important;
+            max-width: 100% !important;
+        }
+        .neo-brutalist {
+            max-width: 100% !important;
+            padding: 10mm !important;
+        }
+        .question-card, .grade-banner, .report-stat {
+            box-shadow: none !important;
+            border: 2px solid #000 !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            margin-bottom: 1.5rem !important;
+        }
+        .grade-banner.grade-good {
+            background-color: #BCFF4F !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .question-header {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="neo-brutalist">
+    <div class="report-header">
+        <h1 class="report-title">SESSION REPORT</h1>
+        <div class="report-actions">
+            <button class="neo-btn neo-btn-primary" onclick="exportPDF()">EXPORT PDF [↓]</button>
+            <button class="neo-btn" onclick="window.print()">PRINT [P]</button>
+            <a href="{% url 'dashboard' %}" class="neo-btn">[<] DASHBOARD</a>
+        </div>
+    </div>
+    
+    <div class="grade-banner {% if interview.avg_score >= 7 or grade_color == 'good' or grade_color == 'success' %}grade-good{% endif %}">
+        <div class="grade-info">
+            <h2 class="grade-text">{{ grade|upper }}</h2>
+            <p class="grade-detail">{{ interview.skill }} // {{ interview.difficulty|upper }}</p>
+        </div>
+        <div class="grade-score">
+            <span class="grade-score-value">{{ interview.avg_score }}</span>
+            <span class="grade-score-label">/10 AVG</span>
+        </div>
+    </div>
+    
+    <div class="report-stats">
+        <div class="report-stat">
+            <span class="report-stat-value">{{ interview.total_score }}</span>
+            <span class="report-stat-label">TOTAL SCORE</span>
+        </div>
+        <div class="report-stat">
+            <span class="report-stat-value">{{ interview.avg_score }}</span>
+            <span class="report-stat-label">AVERAGE</span>
+        </div>
+        <div class="report-stat">
+            <span class="report-stat-value">{{ interview.questions_attempted }}/10</span>
+            <span class="report-stat-label">QUESTIONS</span>
+        </div>
+        <div class="report-stat">
+            <span class="report-stat-value">{{ interview.interview_duration }}S</span>
+            <span class="report-stat-label">DURATION</span>
+        </div>
+    </div>
+    
+    <h2 class="section-title">QUESTION BREAKDOWN</h2>
+    
+    <div class="report-questions">
+        {% for response in responses %}
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-num">Q{{ response.question_number }}</span>
+                <span class="question-score {% if response.ai_score >= 8 %}score-high{% elif response.ai_score >= 5 %}score-mid{% else %}score-low{% endif %}">
+                    {{ response.ai_score|default:"--" }}/10
+                </span>
+            </div>
+            
+            <div class="question-body">
+                <div class="report-section">
+                    <h4>QUESTION</h4>
+                    <p>{{ response.question }}</p>
+                </div>
+                
+                {% if response.user_answer %}
+                <div class="report-section">
+                    <h4>YOUR ANSWER</h4>
+                    <p>{{ response.user_answer }}</p>
+                </div>
+                {% endif %}
+                
+                {% if response.ai_feedback %}
+                <div class="report-section">
+                    <h4>AI FEEDBACK</h4>
+                    <p>{{ response.ai_feedback }}</p>
+                </div>
+                {% endif %}
+                
+                {% if response.strengths %}
+                <div class="report-section">
+                    <h4>STRENGTHS</h4>
+                    <ul>
+                        {% for s in response.strengths %}
+                        <li>[+] {{ s }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if response.improvements %}
+                <div class="report-section">
+                    <h4>AREAS FOR IMPROVEMENT</h4>
+                    <ul>
+                        {% for imp in response.improvements %}
+                        <li>[!] {{ imp }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if response.confidence_tips %}
+                <div class="report-section">
+                    <h4>CONFIDENCE TIPS</h4>
+                    <ul>
+                        {% for tip in response.confidence_tips %}
+                        <li>[*] {{ tip }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="interviewReportData" type="application/json">{{ report_json|safe }}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="{% static 'js/pdf_export.js' %}?v=2.0"></script>
+{% endblock %}

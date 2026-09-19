@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}NEW INTERVIEW -- INTERVIEW AI{% endblock %}
+
+{% block content %}
+<style>
+    .setup-page {
+        font-family: 'Space Grotesk', sans-serif;
+        padding: 2rem 0;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin: 0 0 2rem 0;
+        border-bottom: 4px solid #000;
+        padding-bottom: 1rem;
+    }
+    .section-label {
+        font-family: monospace;
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .skills-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .skill-pill {
+        border: 2.5px solid #000;
+        background-color: #fff;
+        padding: 1rem 1.5rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 4px 4px 0px #000;
+        transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
+    }
+    .skill-pill:active {
+        transform: translate(4px, 4px);
+        box-shadow: 0px 0px 0px #000;
+    }
+    .skill-pill.selected {
+        background-color: #BCFF4F;
+    }
+    
+    .custom-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2.5px solid #000;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        box-shadow: 4px 4px 0px #000;
+        margin-bottom: 2rem;
+        outline: none;
+        border-radius: 0;
+    }
+    .custom-input:focus {
+        background-color: #f9f9f9;
+    }
+    
+    .difficulty-grid {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+    .diff-btn {
+        flex: 1;
+        border: 2.5px solid #000;
+        background-color: #fff;
+        padding: 1.5rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 1.25rem;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 4px 4px 0px #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .diff-btn.selected {
+        background-color: #e0e0e0;
+    }
+    .dot {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #000;
+        display: inline-block;
+    }
+    .dot-easy { background-color: #BCFF4F; }
+    .dot-medium { background-color: #FFD700; }
+    .dot-hard { background-color: #FF4444; }
+    
+    .btn-launch {
+        width: 100%;
+        padding: 1.5rem;
+        background-color: #BCFF4F;
+        color: #000;
+        border: 2.5px solid #000;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 8px 8px 0px #000;
+        transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-launch:active {
+        transform: translate(8px, 8px);
+        box-shadow: 0px 0px 0px #000;
+    }
+    .btn-launch:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+    
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(255,255,255,0.9);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .spinner {
+        width: 64px;
+        height: 64px;
+        border: 6px solid #000;
+        border-top-color: #BCFF4F;
+        animation: spin 1s linear infinite;
+        margin-bottom: 2rem;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .loading-text {
+        font-size: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="setup-page">
+    <h1 class="page-title">INITIALIZE SESSION</h1>
+    
+    <label class="section-label">SELECT SKILL</label>
+    <div class="skills-grid" id="skillsContainer">
+        <button type="button" class="skill-pill" onclick="selectSkill('PYTHON')">PYTHON</button>
+        <button type="button" class="skill-pill" onclick="selectSkill('DJANGO')">DJANGO</button>
+        <button type="button" class="skill-pill" onclick="selectSkill('REACT')">REACT</button>
+        <button type="button" class="skill-pill" onclick="selectSkill('SYSTEM DESIGN')">SYSTEM DESIGN</button>
+    </div>
+    
+    <label class="section-label">OR ENTER CUSTOM SKILL</label>
+    <input type="text" id="customSkill" class="custom-input" placeholder="E.G. DOCKER, KUBERNETES..." oninput="clearSkillPills()">
+    
+    <label class="section-label">DIFFICULTY LEVEL</label>
+    <div class="difficulty-grid">
+        <button type="button" class="diff-btn" id="diff-easy" onclick="selectDifficulty('easy')">
+            <span class="dot dot-easy"></span> EASY
+        </button>
+        <button type="button" class="diff-btn" id="diff-medium" onclick="selectDifficulty('medium')">
+            <span class="dot dot-medium"></span> MEDIUM
+        </button>
+        <button type="button" class="diff-btn" id="diff-hard" onclick="selectDifficulty('hard')">
+            <span class="dot dot-hard"></span> HARD
+        </button>
+    </div>
+    
+    <button type="button" class="btn-launch" id="launchBtn" onclick="startInterview()">LAUNCH SESSION [>]</button>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">GENERATING QUESTIONS...</div>
+</div>
+
+<script>
+    let currentSkill = '';
+    let currentDifficulty = '';
+
+    function selectSkill(skill) {
+        currentSkill = skill;
+        document.getElementById('customSkill').value = '';
+        
+        const pills = document.querySelectorAll('.skill-pill');
+        pills.forEach(p => {
+            if(p.innerText === skill) p.classList.add('selected');
+            else p.classList.remove('selected');
+        });
+        checkForm();
+    }
+
+    function clearSkillPills() {
+        currentSkill = document.getElementById('customSkill').value;
+        const pills = document.querySelectorAll('.skill-pill');
+        pills.forEach(p => p.classList.remove('selected'));
+        checkForm();
+    }
+
+    function selectDifficulty(diff) {
+        currentDifficulty = diff;
+        const btns = document.querySelectorAll('.diff-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        document.getElementById('diff-' + diff).classList.add('selected');
+        checkForm();
+    }
+    
+    function checkForm() {
+        const btn = document.getElementById('launchBtn');
+        if (currentSkill && currentDifficulty) {
+            btn.disabled = false;
+        } else {
+            btn.disabled = true;
+        }
+    }
+    
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === ('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    async function startInterview() {
+        if (!currentSkill || !currentDifficulty) return;
+        
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        
+        try {
+            const response = await fetch('/api/interviews/start/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({
+                    skill: currentSkill,
+                    difficulty: currentDifficulty
+                })
+            });
+            
+            const data = await response.json();
+            if (response.ok && data.success && data.interviewId) {
+                window.location.href = '/interview/' + data.interviewId + '/';
+            } else {
+                alert('ERROR: ' + (data.error || 'Failed to start interview'));
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        } catch (error) {
+            console.error(error);
+            alert('SYSTEM ERROR');
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+    }
+    
+    // Initialize
+    checkForm();
+</script>
+{% endblock %}

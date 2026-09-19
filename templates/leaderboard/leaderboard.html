@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}LEADERBOARD | INTERVIEW AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .neo-brutalist {
+        font-family: monospace, sans-serif;
+        color: #000;
+        text-transform: uppercase;
+    }
+    
+    .page-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        border-bottom: 2.5px solid #000;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .filter-section {
+        margin-bottom: 2rem;
+    }
+    
+    .neo-select {
+        border: 2.5px solid #000;
+        box-shadow: 4px 4px 0px #000;
+        padding: 0.75rem 1rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        background-color: #FFF;
+        text-transform: uppercase;
+        cursor: pointer;
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .leaderboard-panel {
+        border: 2.5px solid #000;
+        box-shadow: 4px 4px 0px #000;
+        background-color: #FFF;
+        overflow-x: auto;
+    }
+    
+    .neo-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .neo-table th, .neo-table td {
+        border-bottom: 2.5px solid #000;
+        border-right: 2.5px solid #000;
+        padding: 1rem;
+        text-align: left;
+    }
+    
+    .neo-table th:last-child, .neo-table td:last-child {
+        border-right: none;
+    }
+    
+    .neo-table th {
+        background-color: #BCFF4F;
+        font-weight: 900;
+        font-size: 1.25rem;
+    }
+    
+    .neo-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .rank-cell {
+        font-weight: 900;
+        font-size: 1.5rem;
+    }
+    
+    .skill-tag {
+        background-color: #BCFF4F;
+        border: 2.5px solid #000;
+        padding: 0.25rem 0.5rem;
+        font-weight: 700;
+        display: inline-block;
+    }
+    
+    .score-cell {
+        font-size: 1.5rem;
+        font-weight: 900;
+    }
+    
+    .loading-state, .empty-state {
+        padding: 3rem;
+        text-align: center;
+        font-weight: 900;
+        font-size: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="neo-brutalist">
+    <h1 class="page-title">GLOBAL LEADERBOARD</h1>
+    
+    <div class="filter-section">
+        <select id="skillFilter" class="neo-select">
+            <option value="">ALL SKILLS</option>
+        </select>
+    </div>
+    
+    <div class="leaderboard-panel">
+        <div id="loadingState" class="loading-state">
+            LOADING...
+        </div>
+        
+        <div id="emptyState" class="empty-state" style="display: none;">
+            NO RANKINGS YET
+        </div>
+        
+        <table id="leaderboardTable" class="neo-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>RANK</th>
+                    <th>CANDIDATE</th>
+                    <th>SKILL</th>
+                    <th>SCORE</th>
+                    <th>AVG</th>
+                    <th>SESSIONS</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+                <!-- Data populated by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const skillFilter = document.getElementById('skillFilter');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+        const leaderboardTable = document.getElementById('leaderboardTable');
+        const leaderboardBody = document.getElementById('leaderboardBody');
+        
+        // Fetch skills for filter
+        fetch('/leaderboard/api/leaderboard/skills/')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(skill => {
+                    const option = document.createElement('option');
+                    option.value = skill.skill;
+                    option.textContent = skill.skill.toUpperCase();
+                    skillFilter.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching skills:', error));
+            
+        function loadLeaderboard(skill = '') {
+            loadingState.style.display = 'block';
+            emptyState.style.display = 'none';
+            leaderboardTable.style.display = 'none';
+            
+            const url = skill ? `/leaderboard/api/leaderboard/?skill=${encodeURIComponent(skill)}` : '/leaderboard/api/leaderboard/';
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    loadingState.style.display = 'none';
+                    
+                    if (data.length === 0) {
+                        emptyState.style.display = 'block';
+                        return;
+                    }
+                    
+                    leaderboardBody.innerHTML = '';
+                    
+                    data.forEach((entry, index) => {
+                        const tr = document.createElement('tr');
+                        
+                        let rankDisplay = index + 1;
+                        if (index < 3) {
+                            rankDisplay = `[*] ${rankDisplay}`;
+                        }
+                        
+                        tr.innerHTML = `
+                            <td class="rank-cell">${rankDisplay}</td>
+                            <td>${entry.candidate_name || 'ANONYMOUS'}</td>
+                            <td><span class="skill-tag">${entry.skill}</span></td>
+                            <td class="score-cell">${entry.total_score}</td>
+                            <td>${entry.average_score}</td>
+                            <td>${entry.sessions_count}</td>
+                        `;
+                        
+                        leaderboardBody.appendChild(tr);
+                    });
+                    
+                    leaderboardTable.style.display = 'table';
+                })
+                .catch(error => {
+                    console.error('Error fetching leaderboard:', error);
+                    loadingState.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    emptyState.textContent = 'ERROR LOADING DATA';
+                });
+        }
+        
+        // Initial load
+        loadLeaderboard();
+        
+        // Filter change
+        skillFilter.addEventListener('change', function() {
+            loadLeaderboard(this.value);
+        });
+    });
+</script>
+{% endblock %}

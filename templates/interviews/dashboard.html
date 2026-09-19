@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}DASHBOARD -- INTERVIEW AI{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-page {
+        font-family: 'Space Grotesk', sans-serif;
+        padding: 2rem 0;
+        color: #000;
+    }
+    .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin: 0 0 2rem 0;
+        border-bottom: 4px solid #000;
+        padding-bottom: 1rem;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    .stat-panel {
+        background-color: #fff;
+        border: 2.5px solid #000;
+        box-shadow: 6px 6px 0px #000;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+    }
+    .stat-label {
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+    .stat-value {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0;
+        color: #BCFF4F;
+        text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin: 0 0 1.5rem 0;
+    }
+    .chart-panel {
+        background-color: #fff;
+        border: 2.5px solid #000;
+        box-shadow: 6px 6px 0px #000;
+        padding: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .interviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .interview-card {
+        background-color: #fff;
+        border: 2.5px solid #000;
+        box-shadow: 6px 6px 0px #000;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .interview-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .skill-tag {
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .difficulty-label {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border: 2px solid #000;
+        font-weight: 700;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+    }
+    .score-display {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    .actions {
+        display: flex;
+        gap: 1rem;
+    }
+    .btn {
+        display: inline-block;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-align: center;
+        cursor: pointer;
+        padding: 0.75rem 1.5rem;
+        border: 2.5px solid #000;
+        box-shadow: 4px 4px 0px #000;
+        border-radius: 0;
+        transition: transform 0.1s, box-shadow 0.1s;
+        text-decoration: none;
+        background-color: #fff;
+        color: #000;
+    }
+    .btn:active {
+        transform: translate(4px, 4px);
+        box-shadow: 0px 0px 0px #000;
+    }
+    .btn-primary {
+        background-color: #BCFF4F;
+    }
+    .btn-danger {
+        background-color: #ff4444;
+    }
+    .empty-state {
+        border: 2.5px solid #000;
+        padding: 3rem;
+        text-align: center;
+        background: repeating-linear-gradient(
+            45deg,
+            #fff,
+            #fff 10px,
+            #f0f0f0 10px,
+            #f0f0f0 20px
+        );
+    }
+    .empty-state p {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+    }
+</style>
+
+<div class="dashboard-page">
+    <h1 class="page-title">MISSION CONTROL</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-panel">
+            <span class="stat-label">TOTAL SESSIONS</span>
+            <span class="stat-value">{{ total_sessions|default:"0" }}</span>
+        </div>
+        <div class="stat-panel">
+            <span class="stat-label">AVG SCORE</span>
+            <span class="stat-value">{{ avg_score|default:"0" }}%</span>
+        </div>
+        <div class="stat-panel">
+            <span class="stat-label">PRACTICE TIME</span>
+            <span class="stat-value">{{ practice_time|default:"0H" }}</span>
+        </div>
+    </div>
+    
+    <h2 class="section-title">PERFORMANCE METRICS</h2>
+    <div class="chart-panel">
+        <canvas id="performanceChart" width="100%" height="300"></canvas>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="section-title" style="margin: 0;">RECENT SESSIONS</h2>
+        <a href="{% url 'new_interview' %}" class="btn btn-primary">[+] NEW INTERVIEW</a>
+    </div>
+    
+    {% if interviews %}
+    <div class="interviews-list">
+        {% for interview in interviews %}
+        <div class="interview-card">
+            <div class="interview-info">
+                <span class="skill-tag">{{ interview.skill }}</span>
+                <div>
+                    <span class="difficulty-label" style="background-color: {% if interview.difficulty == 'easy' %}#BCFF4F{% elif interview.difficulty == 'medium' %}#FFD700{% else %}#FF4444{% endif %};">{{ interview.difficulty }}</span>
+                    <span style="font-weight: 700; margin-left: 1rem;">{{ interview.date|date:"Y-m-d" }}</span>
+                </div>
+            </div>
+            
+            <div class="score-display">
+                {{ interview.score|default:"--" }}
+            </div>
+            
+            <div class="actions">
+                <a href="{% url 'report_detail' interview.id %}" class="btn">VIEW REPORT</a>
+                <button type="button" class="btn btn-danger" onclick="deleteInterview({{ interview.id }})">DELETE</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>NO INTERVIEWS YET</p>
+        <a href="{% url 'new_interview' %}" class="btn btn-primary">LAUNCH FIRST SESSION</a>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartData = {{ chart_data|safe|default:"null" }};
+    function initPerformanceChart(data) {
+        if (!data) return;
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: {
+                    line: {
+                        borderWidth: 4,
+                        borderColor: '#000',
+                        tension: 0
+                    },
+                    point: {
+                        radius: 6,
+                        backgroundColor: '#BCFF4F',
+                        borderWidth: 2,
+                        borderColor: '#000'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: '#000',
+                            lineWidth: 2
+                        },
+                        ticks: {
+                            font: {
+                                family: "'Space Grotesk', sans-serif",
+                                weight: '700',
+                                size: 14
+                            },
+                            color: '#000'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#000',
+                            lineWidth: 2
+                        },
+                        ticks: {
+                            font: {
+                                family: "'Space Grotesk', sans-serif",
+                                weight: '700',
+                                size: 14
+                            },
+                            color: '#000'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                family: "'Space Grotesk', sans-serif",
+                                weight: '700',
+                                size: 14
+                            },
+                            color: '#000'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        initPerformanceChart(chartData);
+    });
+</script>
+{% endblock %}
